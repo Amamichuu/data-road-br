@@ -25,12 +25,7 @@ jobs:
           terraform_version: latest
 
       - name: Terraform Init
-        run: |
-          terraform -chdir=infra/terraform/env/prod init -reconfigure -input=false \
-            -backend-config="bucket=${{ vars.TERRAFORM_BACKEND_S3_BUCKET }}" \
-            -backend-config="key=${{ vars.TERRAFORM_BACKEND_KEY }}" \
-            -backend-config="region=${{ vars.AWS_REGION_US_WEST_2 }}" \
-            -backend-config="dynamodb_table=${{ vars.TERRAFORM_BACKEND_DYNAMODB_TABLE }}"
+        run: terraform -chdir=infra/terraform/env/prod init -input=false
 
       - name: Terraform Plan (Prod)
         run: |
