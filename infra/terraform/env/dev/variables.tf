@@ -31,7 +31,7 @@ variable "aws_secret_access_key" {
 }
 
 # AWS Region
-variable "region" {
+variable "aws_region" {
   description = "AWS region to deploy resources"
   type        = string
   default     = "us-west-2"

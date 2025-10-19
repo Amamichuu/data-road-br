@@ -1,0 +1,59 @@
+### Makefile.util - Generic Terraform helpers
+## Use Bash
+SHELL := /bin/bash
+
+# ----------------------------
+# Export environment variables for Terraform
+# ----------------------------
+# This function sets Terraform environment variables from either GitHub Secrets
+# or the local shell. Terraform will automatically pick up any variable
+# prefixed with TF_VAR_.
+#
+# Usage:
+#   $(call export_tf_vars,<env>)
+# Parameters:
+#   <env> - the environment to export variables for, can be "dev" or "prod"
+#
+# Example:
+#   $(call export_tf_vars,dev)
+export_tf_vars = $(call _export_tf_vars,$1)
+
+_export_tf_vars = \
+	if [ "$1" = "dev" ]; then \
+		export TF_VAR_env="dev"; \
+		export TF_VAR_local_stack_endpoint="${LOCALSTACK_ENDPOINT}"; \
+		export TF_VAR_aws_access_key="${AWS_ACCESS_KEY}"; \
+		export TF_VAR_aws_secret_access_key="${AWS_SECRET_ACCESS_KEY}"; \
+		export TF_VAR_aws_region="${AWS_REGION}"; \
+	elif [ "$1" = "prod" ]; then \
+		export TF_VAR_env="prod"; \
+		export TF_VAR_aws_access_key="${AWS_ACCESS_KEY}"; \
+		export TF_VAR_aws_secret_access_key="${AWS_SECRET_ACCESS_KEY}"; \
+		export TF_VAR_aws_region="${AWS_REGION}"; \
+	fi
+
+# ----------------------------
+# Generic Terraform caller
+# ----------------------------
+# This function calls Terraform for any environment.
+# It automatically moves to the environment's directory and executes
+# the requested Terraform command.
+#
+# Usage:
+#   $(call tf,<env>,<action>)
+# Parameters:
+#   <env>         - the environment, e.g., dev or prod
+#   <action>      - Terraform action, e.g., init, plan, apply, destroy
+#
+# Example:
+#   $(call tf,dev,apply)
+tf = $(call _tf_generic,$1,$2)
+
+# ----------------------------
+# Internal function: _tf_generic
+# ----------------------------
+# Executes Terraform and automatically adds -auto-approve for apply/destroy commands.
+_tf_generic = \
+	echo "Running 'terraform $2' for $1..." ; \
+	cd $(CURDIR)/terraform/env/$1 && \
+	terraform $2 $(if $3,-var-file=$3) $(if $(filter $2,apply destroy),-auto-approve -input=false)

@@ -1,0 +1,34 @@
+### Makefile.util.dev - Dev helpers for LocalStack
+## Use Bash
+SHELL := /bin/bash
+
+## Variables
+# Path to LocalStack docker-compose file
+LOCALSTACK_COMPOSE := $(CURDIR)/terraform/env/dev/docker-compose.yml
+
+# ----------------------------
+# Public functions
+# ----------------------------
+start_local_stack = $(call _start_local_stack)
+stop_local_stack  = $(call _stop_local_stack)
+
+# ----------------------------
+# Internal: start LocalStack and wait for S3 service
+# ----------------------------
+_start_local_stack = \
+	echo "Starting LocalStack for dev..." ; \
+	docker-compose -f $(LOCALSTACK_COMPOSE) up -d ; \
+	echo "Waiting for LocalStack services..." ; \
+	until curl -s http://localhost:4566/_localstack/health | jq -e '.services.s3 == "available"' > /dev/null; do \
+		echo "LocalStack not ready yet..."; \
+		sleep 2; \
+	done ; \
+	echo "LocalStack ready!"
+
+# ----------------------------
+# Internal: stop LocalStack
+# ----------------------------
+_stop_local_stack = \
+	echo "Stopping LocalStack for dev..." ; \
+	docker-compose -f $(LOCALSTACK_COMPOSE) down ; \
+	echo "LocalStack stopped."

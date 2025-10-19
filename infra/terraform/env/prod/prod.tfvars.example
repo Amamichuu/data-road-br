@@ -1,0 +1,5 @@
+# prod.tfvars.example - Not used since the code relies on EXPORT TF_VAR
+env                   = ""
+aws_access_key        = ""
+aws_secret_access_key = ""
+aws_region            = ""

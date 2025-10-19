@@ -8,8 +8,8 @@ services:
     environment:
       - DEBUG=1
       - DOCKER_HOST=unix:///var/run/docker.sock
-      - SERVICES=s3,sqs,sns,lambda,events
-      - DEFAULT_REGION=us-west-2
+      - SERVICES=s3
+      - DEFAULT_REGION=${TF_VAR_aws_region}
     volumes:
       - "/var/run/docker.sock:/var/run/docker.sock" # Required for Lambda
     security_opt:

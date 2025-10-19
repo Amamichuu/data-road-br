@@ -14,8 +14,8 @@ data_dir.mkdir(parents=True, exist_ok=True)
 dataset = "codebynadiia/gdp-1975-2025"
 
 # Get Kaggle credentials from environment
-kaggle_username = os.getenv("KAGGLE_USERNAME")
-kaggle_key = os.getenv("KAGGLE_KEY")
+kaggle_username = "kelasi"#os.getenv("KAGGLE_USERNAME")
+kaggle_key = "902b8749c2bf482d18da5520c9e7908e"#os.getenv("KAGGLE_KEY")
 
 if not kaggle_username or not kaggle_key:
     raise ValueError("KAGGLE_USERNAME and KAGGLE_KEY not found in environment variables or .env file")
